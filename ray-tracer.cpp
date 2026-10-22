@@ -4,80 +4,9 @@
 
 /// Uncomment these lines if you want to debug using couts
 #include <iostream>
+#include "Vector3.hpp"
+#include "Triangle.hpp"
 using namespace std;
-
-/// Uncomment these lines if you happen to add a Vector3 and want to debug :)
-
-class Vector3
-{
-  public:
-  float x, y, z;
-
-  Vector3& operator+=(const Vector3& rhs){
-    x += rhs.x;
-    y += rhs.y;
-    z += rhs.z;
-    return *this;
-  }
-
-  Vector3& operator-=(const Vector3& rhs){
-    x -= rhs.x;
-    y -= rhs.y;
-    z -= rhs.z;
-    return *this;
-  }
-
-  Vector3& operator*=(const float rhs){
-    x *= rhs;
-    y *= rhs;
-    z *= rhs;
-    return *this;
-  }
-
-  float dot(const Vector3& rhs){
-    return x*rhs.x + y * rhs.y + z * rhs.z;
-  }
-
-  Vector3 cross(const Vector3& rhs){
-    return Vector3{
-      y*rhs.z - z*rhs.y, 
-      z*rhs.x - x*rhs.z,
-      x*rhs.y - y*rhs.x
-    };
-  }
-
-  float length(){
-    return sqrt(x*x+y*y+z*z);
-  }
-
-  Vector3 normalize(){
-    float l = length();
-    return Vector3{x/l,y/l,z/l};
-
-  }
-};
-
-inline Vector3& operator+(Vector3 lhs, const Vector3 rhs){
-  return lhs += rhs;
-}
-
-inline Vector3& operator-(Vector3 lhs, const Vector3 rhs){
-  return lhs -= rhs;
-}
-
-inline Vector3& operator*(Vector3 lhs, const float rhs){
-  return lhs *= rhs;
-}
-
-
-inline std::ostream& operator<<(std::ostream& os, const Vector3& v) {
-    return os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
-}
-
-class Triangle{
-  public:
-  Vector3 one,two,three;
-};
 
 int main()
 {
@@ -98,6 +27,9 @@ int main()
   unsigned char pixels[w * h * 3];
 
   Triangle triangle = Triangle{Vector3{-1,1,0}, Vector3{-1,-1,0}, Vector3{1,-1,0}};
+  Triangle triangle2 = Triangle{Vector3{-1,1,.5}, Vector3{-1,-1,-.5}, Vector3{1,-1,.5}};
+
+  vector<Triangle> triangles = {triangle, triangle2};
 
   Vector3 background_color = Vector3{120, 81 ,169};
 
@@ -119,9 +51,10 @@ int main()
 
       Vector3 ray = (target - camera_origin).normalize();
 
-      //find where we hit the plane
+      closest_t = 0;
 
-      
+      for(const Triangle &triangle : triangle)
+      {
       /// Figure out our index in the 1d array of pixels
       int index = y * w * 3 + x * 3;
       
@@ -146,6 +79,9 @@ int main()
       float d = -abc.dot(triangle.one);
     
       float t = -(abc.dot(camera_origin)+d)/abc.dot(ray);
+
+      if(t > closest_t)
+        continue;
     
       Vector3 collision_point = ray*t + camera_origin;
     
@@ -173,12 +109,13 @@ int main()
       else{
         //in triangle
 
-
+        closest_t = t;
 
         r = 0 * u + 0 * b + 255 * a;
         g = 0 * u + 255 * b + 0 * a;
         b = 255 * u + 0 * b + 0 * a;
       }
+    };
     }
   }
 
