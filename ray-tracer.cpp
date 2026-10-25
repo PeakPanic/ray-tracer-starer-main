@@ -14,7 +14,7 @@ int main()
 {
   //util file example
   vector<string> lines = readLines("simple.obj");
-  for(const string& line : line){
+  for(const string& line : lines){
     cout << line << endl;
     vector<string> parts = split(line, ' ');
     cout << parts[0] << endl;
