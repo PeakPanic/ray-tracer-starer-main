@@ -12,13 +12,41 @@ using namespace std;
 
 int main()
 {
+  vector<vector<float>> trianglePoints = {};
+  vector<vector<float>> triangleTextures = {};
+  vector<vector<float>> triangleNormals = {};
+  vector<vector<int>> triangleFaceNumbers = {};
   //util file example
   vector<string> lines = readLines("simple.obj");
   for(const string& line : lines){
     cout << line << endl;
     vector<string> parts = split(line, ' ');
     cout << parts[0] << endl;
+    cout << parts[1] << endl;
+    cout << parts[2] << endl;
+    if(parts[0]=="v"){
+      //vector<float> tempPoints = {stof(parts[1]), stof(parts[2]), stof(parts[3])};
+      trianglePoints.push_back({stof(parts[1]), stof(parts[2]), stof(parts[3])});
+    }
+    else if(parts[0] == "vt"){
+      triangleTextures.push_back({stof(parts[1]), stof(parts[2])});
+    }
+    else if(parts[0] == "vn"){
+      triangleNormals.push_back({stof(parts[1]), stof(parts[2]), stof(parts[3])});
+    }
+    // else if(parts[0] == "f"){
+    //   vector<string> partsFace = split(line, '/');
+    //   triangleFaceNumbers.push_back({stoi(partsFace[1])});
+    // }
   }
+  cout << trianglePoints[1][0] << endl;
+  cout << trianglePoints[2][1] << endl;
+  cout << trianglePoints[0][2] << endl;
+  cout << triangleTextures[0][0] << endl;
+  cout << triangleTextures[0][1] << endl;
+  cout << triangleNormals[0][0] << endl;
+  cout << triangleNormals[0][1] << endl;
+  cout << triangleNormals[0][2] << endl;
 
   /// Example of how to debug with couts. 
   /// You must uncomment the include and namespace lines above
@@ -38,7 +66,7 @@ int main()
   unsigned char pixels[w * h * 3];
 
   Triangle triangle = Triangle{Vector3{-1,1,0}, Vector3{-1,-1,0}, Vector3{1,-1,0}};
-  Triangle triangle2 = Triangle{Vector3{-1,1,.5}, Vector3{-1,-1,-.5}, Vector3{1,-1,.5}};
+  Triangle triangle2 = Triangle{Vector3{-1,1,0.5}, Vector3{-1,-1,-.5}, Vector3{1,-1,.5}};
 
   vector<Triangle> triangles = {triangle, triangle2};
 
