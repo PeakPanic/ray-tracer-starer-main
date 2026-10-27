@@ -34,10 +34,14 @@ int main()
     else if(parts[0] == "vn"){
       triangleNormals.push_back({stof(parts[1]), stof(parts[2]), stof(parts[3])});
     }
-    // else if(parts[0] == "f"){
-    //   vector<string> partsFace = split(line, '/');
-    //   triangleFaceNumbers.push_back({stoi(partsFace[1])});
-    // }
+    else if(parts[0] == "f"){
+      for(const string& moreParts : parts){
+        if(moreParts != "f"){
+          vector<string> partsOfParts = split(moreParts, '/');
+            triangleFaceNumbers.push_back({stoi(partsOfParts[0]), stoi(partsOfParts[1]), stoi(partsOfParts[2])});
+        }
+      }
+    }
   }
   cout << trianglePoints[1][0] << endl;
   cout << trianglePoints[2][1] << endl;
@@ -47,6 +51,10 @@ int main()
   cout << triangleNormals[0][0] << endl;
   cout << triangleNormals[0][1] << endl;
   cout << triangleNormals[0][2] << endl;
+  cout << triangleFaceNumbers[0][2] << endl;
+  cout << triangleFaceNumbers[1][0] << endl;
+  cout << triangleFaceNumbers[2][0] << endl;
+  cout << triangleFaceNumbers[2][1] << endl;
 
   /// Example of how to debug with couts. 
   /// You must uncomment the include and namespace lines above
@@ -65,10 +73,16 @@ int main()
   /// The 1d array for storing the pixel we have generated
   unsigned char pixels[w * h * 3];
 
-  Triangle triangle = Triangle{Vector3{-1,1,0}, Vector3{-1,-1,0}, Vector3{1,-1,0}};
-  Triangle triangle2 = Triangle{Vector3{-1,1,0.5}, Vector3{-1,-1,-.5}, Vector3{1,-1,.5}};
+  // Triangle triangle = Triangle{Vector3{-1,1,0}, Vector3{-1,-1,0}, Vector3{1,-1,0}};
+  // Triangle triangle2 = Triangle{Vector3{-1,1,0.5}, Vector3{-1,-1,-.5}, Vector3{1,-1,.5}};
 
-  vector<Triangle> triangles = {triangle, triangle2};
+  vector<Triangle> triangles = {};
+
+  for(const vector<int> i : triangleFaceNumbers){
+    triangles.push_back(Triangle{Vector3{}})
+  }
+  //Ok hear me out, need triangle to be doing stuff but idk rn if triangleFaceNumbers should be a 2d or 3d vector
+  //but you gotta have faith, glhf!!!
 
   Vector3 background_color = Vector3{150, 0, 255};
 
@@ -115,12 +129,7 @@ int main()
         float d = -abc.dot(triangle.one);
         /// Figure out our index in the 1d array of pixels
         int index = y * w * 3 + x * 3;
-        /// Assign the r, g, and b values to the pixel at index
-        pixels[index] = r;
-        pixels[index + 1] = g;
-        pixels[index + 2] = b;
-
-    
+        
         float t = -(abc.dot(camera_origin)+d)/abc.dot(ray);
 
         if(t > closest_t)
