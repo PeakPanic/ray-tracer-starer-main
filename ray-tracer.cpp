@@ -5,114 +5,114 @@
 /// Uncomment these lines if you want to debug using couts
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include "Vector3.hpp"
 #include "Triangle.hpp"
 #include "file_util.h"
 using namespace std;
+vector<vector<float>> trianglePoints = {};
+vector<vector<float>> triangleTextures = {};
+vector<vector<float>> triangleNormals = {};
+vector<vector<vector<int>>> triangleFaceNumbers = {};
+//util file example
+vector<string> lines = readLines("SuzanneOBJ.obj");
+for(const string& line : lines){
+  // cout << line << endl;
+  vector<string> parts = split(line, ' ');
+  // cout << parts[0] << endl;
+  // cout << parts[1] << endl;
+  // cout << parts[2] << endl;
+  if(parts[0]=="v"){
+    //cout << "Test1a" << endl;
+    //vector<float> tempPoints = {stof(parts[1]), stof(parts[2]), stof(parts[3])};
+    trianglePoints.push_back({stof(parts[1]), stof(parts[2]), stof(parts[3])});
+    //cout << "Test2a" << endl;
+  }
+  else if(parts[0] == "vt"){
+    //cout << "Test1b" << endl;
+    triangleTextures.push_back({stof(parts[1]), stof(parts[2])});
+    //cout << "Test2b" << endl;
+  }
+  else if(parts[0] == "vn"){
+    //cout << "Test1c" << endl;
+    triangleNormals.push_back({stof(parts[1]), stof(parts[2]), stof(parts[3])});
+    //cout << "Test2c" << endl;
+  }
+  else if(parts[0] == "f"){
+    // cout << "Test1d" << endl;
+    vector<vector<int>> temp;
+    for(const string& moreParts : parts){
+      if(moreParts != "f"){
+        vector<string> partsOfParts = split(moreParts, '/');
+          temp.push_back({stoi(partsOfParts[0]), stoi(partsOfParts[1]), stoi(partsOfParts[2])});
+      }
+    }
+    triangleFaceNumbers.push_back(temp);
+    // cout << "Test2d" << endl;
+  }
+}
+
+// cout << trianglePoints[1][0] << endl;
+// cout << trianglePoints[2][1] << endl;
+// cout << trianglePoints[0][2] << endl;
+// cout << triangleTextures[0][0] << endl;
+// cout << triangleTextures[0][1] << endl;
+// cout << triangleNormals[0][0] << endl;
+// cout << triangleNormals[0][1] << endl;
+// cout << triangleNormals[0][2] << endl;
+// cout << triangleFaceNumbers[0][0][2] << endl;
+// cout << triangleFaceNumbers[0][1][0] << endl;
+// cout << triangleFaceNumbers[0][2][0] << endl;
+// cout << triangleFaceNumbers[0][2][1] << endl;
+
+/// Example of how to debug with couts. 
+/// You must uncomment the include and namespace lines above
+
+/// Width of the final image
+const int w = 640;
+
+/// Height of the final image
+const int h = 640;
+
+/// The 1d array for storing the pixel we have generated
+unsigned char pixels[w * h * 3];
+
+// Triangle triangle = Triangle{Vector3{-1,1,0}, Vector3{-1,-1,0}, Vector3{1,-1,0}};
+// Triangle triangle2 = Triangle{Vector3{-1,1,0.5}, Vector3{-1,-1,-.5}, Vector3{1,-1,.5}};
+
+vector<Triangle> triangles = {};
+
+for(const vector<vector<int>> i : triangleFaceNumbers){
+  //cout << i[0][0] << endl;
+  triangles.push_back(Triangle{
+    Vector3{
+      trianglePoints[i[0][0] - 1][0],
+      trianglePoints[i[0][0] - 1][1],
+      trianglePoints[i[0][0] - 1][2],
+    },
+    Vector3{
+      trianglePoints[i[1][0] - 1][0],
+      trianglePoints[i[1][0] - 1][1],
+      trianglePoints[i[1][0] - 1][2],
+    },
+    Vector3{
+      trianglePoints[i[2][0] - 1][0],
+      trianglePoints[i[2][0] - 1][1],
+      trianglePoints[i[2][0] - 1][2],
+    }
+  });
+}
+//Ok hear me out, need triangle to be doing stuff but idk rn if triangleFaceNumbers should be a 2d or 3d vector
+//but you gotta have faith, glhf!!!
+
+Vector3 background_color = Vector3{0, 0, 0};
+
+Vector3 trace_ray(Vector3 origin, Vector3 direction){
+  
+}
 
 int main()
 {
-  vector<vector<float>> trianglePoints = {};
-  vector<vector<float>> triangleTextures = {};
-  vector<vector<float>> triangleNormals = {};
-  vector<vector<vector<int>>> triangleFaceNumbers = {};
-  //util file example
-  vector<string> lines = readLines("Untitled.obj");
-  for(const string& line : lines){
-    // cout << line << endl;
-    vector<string> parts = split(line, ' ');
-    // cout << parts[0] << endl;
-    // cout << parts[1] << endl;
-    // cout << parts[2] << endl;
-    if(parts[0]=="v"){
-      //cout << "Test1a" << endl;
-      //vector<float> tempPoints = {stof(parts[1]), stof(parts[2]), stof(parts[3])};
-      trianglePoints.push_back({stof(parts[1]), stof(parts[2]), stof(parts[3])});
-      //cout << "Test2a" << endl;
-    }
-    else if(parts[0] == "vt"){
-      //cout << "Test1b" << endl;
-      triangleTextures.push_back({stof(parts[1]), stof(parts[2])});
-      //cout << "Test2b" << endl;
-    }
-    else if(parts[0] == "vn"){
-      //cout << "Test1c" << endl;
-      triangleNormals.push_back({stof(parts[1]), stof(parts[2]), stof(parts[3])});
-      //cout << "Test2c" << endl;
-    }
-    else if(parts[0] == "f"){
-      // cout << "Test1d" << endl;
-      vector<vector<int>> temp;
-      for(const string& moreParts : parts){
-        if(moreParts != "f"){
-          vector<string> partsOfParts = split(moreParts, '/');
-            temp.push_back({stoi(partsOfParts[0]), stoi(partsOfParts[1]), stoi(partsOfParts[2])});
-        }
-      }
-      triangleFaceNumbers.push_back(temp);
-      // cout << "Test2d" << endl;
-    }
-  }
-
-  // cout << trianglePoints[1][0] << endl;
-  // cout << trianglePoints[2][1] << endl;
-  // cout << trianglePoints[0][2] << endl;
-  // cout << triangleTextures[0][0] << endl;
-  // cout << triangleTextures[0][1] << endl;
-  // cout << triangleNormals[0][0] << endl;
-  // cout << triangleNormals[0][1] << endl;
-  // cout << triangleNormals[0][2] << endl;
-  // cout << triangleFaceNumbers[0][0][2] << endl;
-  // cout << triangleFaceNumbers[0][1][0] << endl;
-  // cout << triangleFaceNumbers[0][2][0] << endl;
-  // cout << triangleFaceNumbers[0][2][1] << endl;
-
-  /// Example of how to debug with couts. 
-  /// You must uncomment the include and namespace lines above
-  //cout << "Hello, world" << endl;
-  Vector3 temp = Vector3(0,0,0);
-  temp += Vector3{1,1,1};
-
-  //cout << temp << endl;
-
-  /// Width of the final image
-  const int w = 640;
-
-  /// Height of the final image
-  const int h = 640;
-
-  /// The 1d array for storing the pixel we have generated
-  unsigned char pixels[w * h * 3];
-
-  // Triangle triangle = Triangle{Vector3{-1,1,0}, Vector3{-1,-1,0}, Vector3{1,-1,0}};
-  // Triangle triangle2 = Triangle{Vector3{-1,1,0.5}, Vector3{-1,-1,-.5}, Vector3{1,-1,.5}};
-
-  vector<Triangle> triangles = {};
-
-  for(const vector<vector<int>> i : triangleFaceNumbers){
-    //cout << i[0][0] << endl;
-    triangles.push_back(Triangle{
-      Vector3{
-        trianglePoints[i[0][0] - 1][0],
-        trianglePoints[i[0][0] - 1][1],
-        trianglePoints[i[0][0] - 1][2],
-      },
-      Vector3{
-        trianglePoints[i[1][0] - 1][0],
-        trianglePoints[i[1][0] - 1][1],
-        trianglePoints[i[1][0] - 1][2],
-      },
-      Vector3{
-        trianglePoints[i[2][0] - 1][0],
-        trianglePoints[i[2][0] - 1][1],
-        trianglePoints[i[2][0] - 1][2],
-      }
-    });
-  }
-  //Ok hear me out, need triangle to be doing stuff but idk rn if triangleFaceNumbers should be a 2d or 3d vector
-  //but you gotta have faith, glhf!!!
-
-  Vector3 background_color = Vector3{150, 0, 255};
 
   /// Loop over each line doing down  
   for (int y = 0; y < h; y++)
@@ -160,7 +160,7 @@ int main()
         
         float t = -(abc.dot(camera_origin)+d)/abc.dot(ray);
 
-        if(t > closest_t)
+        if(t > closest_t || t <= 0)
           continue;
     
         Vector3 collision_point = ray*t + camera_origin;
@@ -183,7 +183,7 @@ int main()
     
         float diff = abs(1-sum);
     
-        if(diff > 0.00001){
+        if(diff > 0.00001 || isnan(sum)){
          //not in triangle
         }
         else{
@@ -191,9 +191,22 @@ int main()
 
           closest_t = t;
 
-          r = 0 * u + 0 * b + 255 * a;
-          g = 0 * u + 255 * b + 0 * a;
-          b = 255 * u + 0 * b + 0 * a;
+          Vector3 base_color = Vector3{255,255,255};
+          Vector3 light_direction = Vector3{.5,1,.1}.normalize();
+
+          Vector3 ambient = base_color * .1;
+          Vector3 normal = p.normalize();
+
+          float strength = max(0.f, light_direction.dot(normal));
+
+          Vector3 diffuse = base_color * strength;
+          Vector3 reflective = Vector3{0,0,0};
+
+          Vector3 color = ambient + diffuse + reflective;
+
+          r = color.x;
+          g = color.y;
+          b = color.z;
         }
       }
       pixels[index] = r;
