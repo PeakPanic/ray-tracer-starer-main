@@ -114,13 +114,140 @@ int parcing(){
     });
   }
 }
+
+
+
 //Ok hear me out, need triangle to be doing stuff but idk rn if triangleFaceNumbers should be a 2d or 3d vector
 //but you gotta have faith, glhf!!!
 
 Vector3 background_color = Vector3{0, 0, 0};
 
-Vector3 trace_ray(Vector3 origin, Vector3 direction){
+float trace_ray_distance(Vector3 origin, Vector3 direction){
+  float closest_t = INFINITY;
+
+  for(const Triangle &triangle : triangles){
+    Vector3 edge_one = triangle.one - triangle.two;
+    Vector3 edge_two = triangle.three - triangle.two;
+    Vector3 p = edge_two.cross(edge_one);
+    Vector3 abc = p.normalize();
+    float d = -abc.dot(triangle.one);
+    /// Figure out our index in the 1d array of pixels
+    
+    float t = -(abc.dot(origin)+d)/abc.dot(direction);
+
+    if(t > closest_t || t <= 0)
+      continue;
+
+    Vector3 collision_point = direction*t + origin;
+
+    Vector3 minus_one = collision_point - triangle.one;
+    Vector3 minus_two = collision_point - triangle.two;
+    Vector3 minus_three = collision_point - triangle.three;
+
+    float triangle_area = p.length()/2;
+
+    float area_one = minus_two.cross(minus_three).length()/2;
+    float area_two = minus_three.cross(minus_one).length()/2;
+    float area_three = minus_one.cross(minus_two).length()/2;
+
+    float u = area_one/triangle_area;
+    float v = area_two/triangle_area;
+    float a = area_three/triangle_area;
+
+    float sum = u + v + a;
+
+    float diff = abs(1-sum);
+
+    if(diff > 0.00001 || isnan(sum)){
+      //not in triangle
+    }
+    else{
+      //in triangle
+
+      closest_t = t;
+
+  }
+}
+return closest_t;
+}
+
+Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 2000){
+  Vector3 color = Vector3(background_color.x, background_color.y, background_color.z);
+  if(bounces <= 0)
+    return background_color;
   
+  float closest_t = 1000000;
+
+  for(const Triangle &triangle : triangles){
+    Vector3 edge_one = triangle.one - triangle.two;
+    Vector3 edge_two = triangle.three - triangle.two;
+    Vector3 p = edge_two.cross(edge_one);
+    Vector3 abc = p.normalize();
+    float d = -abc.dot(triangle.one);
+    /// Figure out our index in the 1d array of pixels
+    
+    float t = -(abc.dot(origin)+d)/abc.dot(direction);
+
+    if(t > closest_t || t <= 0)
+      continue;
+
+    Vector3 collision_point = direction*t + origin;
+
+    Vector3 minus_one = collision_point - triangle.one;
+    Vector3 minus_two = collision_point - triangle.two;
+    Vector3 minus_three = collision_point - triangle.three;
+
+    float triangle_area = p.length()/2;
+
+    float area_one = minus_two.cross(minus_three).length()/2;
+    float area_two = minus_three.cross(minus_one).length()/2;
+    float area_three = minus_one.cross(minus_two).length()/2;
+
+    float u = area_one/triangle_area;
+    float v = area_two/triangle_area;
+    float a = area_three/triangle_area;
+
+    float sum = u + v + a;
+
+    float diff = abs(1-sum);
+
+    if(diff > 0.00001 || isnan(sum)){
+      //not in triangle
+    }
+    else{
+      //in triangle
+
+      closest_t = t;
+
+      Vector3 base_color = Vector3{255,255,255};
+      Vector3 light_direction = Vector3{.5,1,.1}.normalize();
+
+      Vector3 ambient = base_color * .1;
+      Vector3 normal = p.normalize();
+
+      float strength = max(0.f, light_direction.dot(normal));
+
+      Vector3 diffuse = base_color * strength;
+
+      if(trace_ray_distance(collision_point, light_direction) != INFINITY){
+        diffuse = Vector3{0,0,0};
+      }
+
+      Vector3 reflective = Vector3{0,0,0};
+
+      if(true){
+        Vector3 reflective_direction = direction - normal * 2 * normal.dot(direction);
+        reflective = trace_ray(collision_point, reflective_direction, bounces-1) * .5;
+        diffuse *= .5;
+        ambient *= .5;
+      }
+
+      Vector3 _color = ambient + diffuse + reflective;
+
+      color = _color;
+    }
+  }
+  return color;
 }
 
 int main()
@@ -158,69 +285,67 @@ int main()
 
       Vector3 ray = temp.normalize();
 
-      float closest_t = 1000000;
-
-      for(const Triangle &triangle : triangles)
-      {
-        Vector3 edge_one = triangle.one - triangle.two;
-        Vector3 edge_two = triangle.three - triangle.two;
-        Vector3 p = edge_two.cross(edge_one);
-        Vector3 abc = p.normalize();
-        float d = -abc.dot(triangle.one);
-        /// Figure out our index in the 1d array of pixels
-        int index = y * w * 3 + x * 3;
+      // for(const Triangle &triangle : triangles)
+      // {
+        // Vector3 edge_one = triangle.one - triangle.two;
+        // Vector3 edge_two = triangle.three - triangle.two;
+        // Vector3 p = edge_two.cross(edge_one);
+        // Vector3 abc = p.normalize();
+        // float d = -abc.dot(triangle.one);
+        // /// Figure out our index in the 1d array of pixels
+        // int index = y * w * 3 + x * 3;
         
-        float t = -(abc.dot(camera_origin)+d)/abc.dot(ray);
+        // float t = -(abc.dot(camera_origin)+d)/abc.dot(ray);
 
-        if(t > closest_t || t <= 0)
-          continue;
+        // if(t > closest_t || t <= 0)
+        //   continue;
     
-        Vector3 collision_point = ray*t + camera_origin;
+        // Vector3 collision_point = ray*t + camera_origin;
     
-        Vector3 minus_one = collision_point - triangle.one;
-        Vector3 minus_two = collision_point - triangle.two;
-        Vector3 minus_three = collision_point - triangle.three;
+        // Vector3 minus_one = collision_point - triangle.one;
+        // Vector3 minus_two = collision_point - triangle.two;
+        // Vector3 minus_three = collision_point - triangle.three;
     
-        float triangle_area = p.length()/2;
+        // float triangle_area = p.length()/2;
     
-        float area_one = minus_two.cross(minus_three).length()/2;
-        float area_two = minus_three.cross(minus_one).length()/2;
-        float area_three = minus_one.cross(minus_two).length()/2;
+        // float area_one = minus_two.cross(minus_three).length()/2;
+        // float area_two = minus_three.cross(minus_one).length()/2;
+        // float area_three = minus_one.cross(minus_two).length()/2;
     
-        float u = area_one/triangle_area;
-        float v = area_two/triangle_area;
-        float a = area_three/triangle_area;
+        // float u = area_one/triangle_area;
+        // float v = area_two/triangle_area;
+        // float a = area_three/triangle_area;
     
-        float sum = u + v + a;
+        // float sum = u + v + a;
     
-        float diff = abs(1-sum);
+        // float diff = abs(1-sum);
     
-        if(diff > 0.00001 || isnan(sum)){
-         //not in triangle
-        }
-        else{
-          //in triangle
+        // if(diff > 0.00001 || isnan(sum)){
+        //  //not in triangle
+        // }
+        // else{
+        //   //in triangle
 
-          closest_t = t;
+        //   closest_t = t;
 
-          Vector3 base_color = Vector3{255,255,255};
-          Vector3 light_direction = Vector3{.5,1,.1}.normalize();
+        //   Vector3 base_color = Vector3{255,255,255};
+        //   Vector3 light_direction = Vector3{.5,1,.1}.normalize();
 
-          Vector3 ambient = base_color * .1;
-          Vector3 normal = p.normalize();
+        //   Vector3 ambient = base_color * .1;
+        //   Vector3 normal = p.normalize();
 
-          float strength = max(0.f, light_direction.dot(normal));
+        //   float strength = max(0.f, light_direction.dot(normal));
 
-          Vector3 diffuse = base_color * strength;
-          Vector3 reflective = Vector3{0,0,0};
+        //   Vector3 diffuse = base_color * strength;
+        //   Vector3 reflective = Vector3{0,0,0};
 
-          Vector3 color = ambient + diffuse + reflective;
+        //   Vector3 color = ambient + diffuse + reflective;
 
-          r = color.x;
-          g = color.y;
-          b = color.z;
-        }
-      }
+        //   r = color.x;
+        //   g = color.y;
+        //   b = color.z;
+        // }
+      // }
       pixels[index] = r;
       pixels[index+1] = g;
       pixels[index+2] = b;
