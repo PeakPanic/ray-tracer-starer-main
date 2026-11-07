@@ -43,11 +43,11 @@ Vector3 Vector3::normalize(){
     return Vector3{x/l,y/l,z/l};
 }
 
-Vector3 operator+(Vector3 lhs, const Vector3 rhs){
+Vector3 operator+(Vector3 lhs, const Vector3 &rhs){
   return lhs += rhs;
 }
 
-Vector3 operator-(Vector3 lhs, const Vector3 rhs){
+Vector3 operator-(Vector3 lhs, const Vector3 &rhs){
   return lhs -= rhs;
 }
 
