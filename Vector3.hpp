@@ -25,9 +25,9 @@ struct Vector3
   Vector3 normalize();
 };
 
-Vector3 operator+(Vector3 lhs, const Vector3 rhs);
+Vector3 operator+(Vector3 lhs, const Vector3 &rhs);
 
-Vector3 operator-(Vector3 lhs, const Vector3 rhs);
+Vector3 operator-(Vector3 lhs, const Vector3 &rhs);
 
 Vector3 operator*(Vector3 lhs, const float rhs);
 
