@@ -23,16 +23,17 @@ unsigned char pixels[w*h*3];
 
 Vector3 background_color = Vector3{0, 0, 0};
 
-vector<vector<float>> trianglePoints = {};
-vector<vector<float>> triangleTextures = {};
-vector<vector<float>> triangleNormals = {};
-vector<vector<vector<int>>> triangleFaceNumbers = {};
 vector<Triangle> triangles = {};
 
 //util file example
-vector<string> lines = readLines("SuzanneOBJ.obj");
 
 int parcing(){
+  vector<string> lines = readLines("SuzanneOBJ.obj");
+  vector<vector<float>> trianglePoints = {};
+  vector<vector<float>> triangleTextures = {};
+  vector<vector<float>> triangleNormals = {};
+  vector<vector<vector<int>>> triangleFaceNumbers = {};
+
   for(const string& line : lines){
     // cout << line << endl;
     vector<string> parts = split(line, ' ');
@@ -67,7 +68,6 @@ int parcing(){
       triangleFaceNumbers.push_back(temp);
       // cout << "Test2d" << endl;
     }
-    return 0;
   }
 
 
@@ -114,6 +114,7 @@ int parcing(){
       }
     });
   }
+  return 0;
 }
 
 
@@ -251,6 +252,7 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 2000){
 
 int main()
 {
+  parcing();
   Vector3 camera_origin = Vector3{0, 0, 1};
   Vector3 camera_look_at = Vector3{0, 0, 0};
   Vector3 camera_up = Vector3{0, 1, 0};
