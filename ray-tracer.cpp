@@ -28,7 +28,7 @@ vector<Triangle> triangles = {};
 //util file example
 
 int parcing(){
-  vector<string> lines = readLines("SuzanneOBJ.obj");
+  vector<string> lines = readLines("OpenBox.obj");
   vector<vector<float>> trianglePoints = {};
   vector<vector<float>> triangleTextures = {};
   vector<vector<float>> triangleNormals = {};
@@ -171,7 +171,7 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
 return closest_t;
 }
 
-Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 20){
+Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 200){
   Vector3 color = Vector3(background_color.x, background_color.y, background_color.z);
   if(bounces <= 0)
     return background_color;
