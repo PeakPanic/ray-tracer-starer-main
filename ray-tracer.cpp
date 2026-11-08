@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 /// Width of the final image
 const int w = 640;
 
@@ -117,8 +116,6 @@ int parcing(){
   return 0;
 }
 
-
-
 //Ok hear me out, need triangle to be doing stuff but idk rn if triangleFaceNumbers should be a 2d or 3d vector
 //but you gotta have faith, glhf!!!
 
@@ -171,7 +168,7 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
 return closest_t;
 }
 
-Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 200){
+Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 20){
   Vector3 color = Vector3(background_color.x, background_color.y, background_color.z);
   if(bounces <= 0)
     return background_color;
@@ -297,7 +294,6 @@ int main()
       pixels[index+2] = b;
     }
   }
-
   ///Write the final image as a png
   stbi_write_png("image.png", w, h, 3, pixels, w * 3);
   return 0;
