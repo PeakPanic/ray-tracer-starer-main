@@ -26,7 +26,7 @@ vector<Triangle> triangles = {};
 
 //util file example
 
-int parcing(string fileName){
+void parcing(string fileName){
   vector<string> lines = readLines(fileName);
   vector<vector<float>> trianglePoints = {};
   vector<vector<float>> triangleTextures = {};
@@ -113,7 +113,6 @@ int parcing(string fileName){
       }
     });
   }
-  return 0;
 }
 
 //Ok hear me out, need triangle to be doing stuff but idk rn if triangleFaceNumbers should be a 2d or 3d vector
@@ -247,20 +246,8 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 3){
   return color;
 }
 
-int main()
-{
-  bool animated = false;
-  string yesNo;
-  string objName;
-  cout << "Enter OBJ file's name: ";
-  cin >> objName;
-  cout << "Is it animated (Y/N): ";
-  cin >> yesNo;
-  if(yesNo == "Y"){
-    animated = true;
-  }
-
-  parcing(objName);
+void generate(bool animated, string name, int number){
+  parcing(name + ".obj");
   Vector3 camera_origin = Vector3{0, 0, 1};
   Vector3 camera_look_at = Vector3{0, 0, 0};
   Vector3 camera_up = Vector3{0, 1, 0};
@@ -306,6 +293,23 @@ int main()
     }
   }
   ///Write the final image as a png
-  stbi_write_png("image.png", w, h, 3, pixels, w * 3);
+  stbi_write_png((name + ".png").c_str(), w, h, 3, pixels, w * 3);
+}
+
+int main()
+{
+  bool animated = false;
+  string yesNo;
+  string objName;
+  cout << "Enter OBJ file's name (exclude the .obj): ";
+  cin >> objName;
+  cout << "Is it animated (Y/N): ";
+  cin >> yesNo;
+  if(yesNo == "Y"){
+    animated = true;
+  }
+
+  generate(animated, objName, 1);
+
   return 0;
 }
