@@ -247,7 +247,14 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 3){
 }
 
 void generate(bool animated, string name, int number){
-  parcing(name + ".obj");
+
+  if(animated){
+    parcing("AnimatedOBJFiles/" + name + ".obj");
+  }
+  else{
+    parcing("ImageOBJFiles/" + name + ".obj");
+  }
+
   Vector3 camera_origin = Vector3{0, 0, 1};
   Vector3 camera_look_at = Vector3{0, 0, 0};
   Vector3 camera_up = Vector3{0, 1, 0};
@@ -293,7 +300,12 @@ void generate(bool animated, string name, int number){
     }
   }
   ///Write the final image as a png
-  stbi_write_png((name + ".png").c_str(), w, h, 3, pixels, w * 3);
+  if(animated){
+    
+  }
+  else{
+    stbi_write_png(("ImagesMade/" + name + ".png").c_str(), w, h, 3, pixels, w * 3);
+  }
 }
 
 int main()
@@ -301,15 +313,21 @@ int main()
   bool animated = false;
   string yesNo;
   string objName;
+  int objCount = 1;
   cout << "Enter OBJ file's name (exclude the .obj): ";
   cin >> objName;
   cout << "Is it animated (Y/N): ";
   cin >> yesNo;
-  if(yesNo == "Y"){
+  if(yesNo == "Y" || yesNo == "y" || yesNo == "yes" || yesNo == "Yes"){
     animated = true;
   }
 
-  generate(animated, objName, 1);
+  if(animated){
+
+  }
+  else{
+    generate(animated, objName, objCount);
+  }
 
   return 0;
 }
