@@ -26,8 +26,8 @@ vector<Triangle> triangles = {};
 
 //util file example
 
-int parcing(){
-  vector<string> lines = readLines("OpenBox.obj");
+int parcing(string fileName){
+  vector<string> lines = readLines(fileName);
   vector<vector<float>> trianglePoints = {};
   vector<vector<float>> triangleTextures = {};
   vector<vector<float>> triangleNormals = {};
@@ -168,7 +168,7 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
 return closest_t;
 }
 
-Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 20){
+Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 3){
   Vector3 color = Vector3(background_color.x, background_color.y, background_color.z);
   if(bounces <= 0)
     return background_color;
@@ -249,7 +249,18 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 20){
 
 int main()
 {
-  parcing();
+  bool animated = false;
+  string yesNo;
+  string objName;
+  cout << "Enter OBJ file's name: ";
+  cin >> objName;
+  cout << "Is it animated (Y/N): ";
+  cin >> yesNo;
+  if(yesNo == "Y"){
+    animated = true;
+  }
+
+  parcing(objName);
   Vector3 camera_origin = Vector3{0, 0, 1};
   Vector3 camera_look_at = Vector3{0, 0, 0};
   Vector3 camera_up = Vector3{0, 1, 0};
