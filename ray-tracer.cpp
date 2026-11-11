@@ -2,10 +2,11 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-/// Uncomment these lines if you want to debug using couts
 #include <iostream>
 #include <vector>
 #include <algorithm>
+///Format include is for formating the number when running the animation for loop
+#include <format>
 #include "Vector3.hpp"
 #include "Triangle.hpp"
 #include "file_util.h"
@@ -167,7 +168,7 @@ float trace_ray_distance(Vector3 origin, Vector3 direction){
 return closest_t;
 }
 
-Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 3){
+Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 1){
   Vector3 color = Vector3(background_color.x, background_color.y, background_color.z);
   if(bounces <= 0)
     return background_color;
@@ -301,7 +302,7 @@ void generate(bool animated, string name, int number){
   }
   ///Write the final image as a png
   if(animated){
-    
+    stbi_write_png(("AnimatedImagesMade/" + name + ".png").c_str(), w, h, 3, pixels, w * 3);
   }
   else{
     stbi_write_png(("ImagesMade/" + name + ".png").c_str(), w, h, 3, pixels, w * 3);
@@ -318,15 +319,40 @@ int main()
   cin >> objName;
   cout << "Is it animated (Y/N): ";
   cin >> yesNo;
+  int currentCount = 1;
+
   if(yesNo == "Y" || yesNo == "y" || yesNo == "yes" || yesNo == "Yes"){
     animated = true;
+    cout << "How many frames? (Up to 999): ";
+    cin >> objCount;
   }
 
   if(animated){
-
+    for(int i = 1; i <= objCount; i++){
+      currentCount = i;
+      cout << currentCount << endl;
+      vector<int> countingPositions = {0,0,0,0};
+      for(int j = 0; j < currentCount; j++){
+        countingPositions[0]++;
+        if(countingPositions[0] > 9){
+          countingPositions[1]++;
+          countingPositions[0] = 0;
+        }
+        if(countingPositions[1] > 9){
+          countingPositions[2]++;
+          countingPositions[1] = 0;
+        }
+        if(countingPositions[2] > 9){
+          countingPositions[3]++;
+          countingPositions[2] = 0;
+        }
+      }
+      cout << objName + to_string(countingPositions[3]) + to_string(countingPositions[2]) + to_string(countingPositions[1]) + to_string(countingPositions[0])<< endl;
+      generate(animated, objName + to_string(countingPositions[3]) + to_string(countingPositions[2]) + to_string(countingPositions[1]) + to_string(countingPositions[0]), currentCount);
+    }
   }
   else{
-    generate(animated, objName, objCount);
+    generate(animated, objName, currentCount);
   }
 
   return 0;
