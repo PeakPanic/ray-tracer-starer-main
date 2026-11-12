@@ -6,8 +6,7 @@
 #include <vector>
 #include <algorithm>
 ///Format include is for formating the number when running the animation for loop
-#include <format>
-#include "Vector3.hpp"
+// #include "Vector3.hpp"
 #include "Triangle.hpp"
 #include "file_util.h"
 
@@ -248,6 +247,7 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 1){
 }
 
 void generate(bool animated, string name, int number){
+  triangles = {};
 
   if(animated){
     parcing("AnimatedOBJFiles/" + name + ".obj");
