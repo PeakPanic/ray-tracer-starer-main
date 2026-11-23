@@ -3,6 +3,7 @@
 #include "stb_image_write.h"
 
 #include <iostream>
+#include <random>
 #include <vector>
 #include <algorithm>
 ///Format include is for formating the number when running the animation for loop
@@ -247,6 +248,11 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 1){
 }
 
 void generate(bool animated, string name, int number){
+  //Code below is for random seed generation for the random number stuff below
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<float> dist(-0.5f, 0.5f);
+
   triangles = {};
 
   if(animated){
@@ -266,34 +272,52 @@ void generate(bool animated, string name, int number){
     /// While going down, loop over every pixel going right
     for (int x = 0; x < w; x++)
     {
-
       int index = y * w * 3 + x * 3;
-      
+      float r;
+      float g;
+      float b;
+
       /// The value of the red channel (0-255)
-      unsigned char r = background_color.x;
+      r = background_color.x;
       
       /// The value of the green channel (0-255)
-      unsigned char g = background_color.y;
+      g = background_color.y;
       
       /// The value of the blue channel (0-255)
-      unsigned char b = background_color.z;
+      b = background_color.z;
       
-      //How do I ray trace?
+      for (int i = 0; i < 16; i++){
+        
+        
+        //How do I ray trace?
+        float offsetX = dist(gen);
+        float offsetY = dist(gen);
+  
+        Vector3 target{
+          (x + 0.5f + offsetX)/(float)w * 2 - 1, -((y + 0.5f + offsetY)/(float)h * 2 - 1), 0
+        };
+  
+        Vector3 temp = (target - camera_origin);
+  
+        Vector3 ray = temp.normalize();
+  
+        Vector3 color = trace_ray(camera_origin, ray);
+        
+        if(i == 0){
+          r = color.x;  
+          g = color.y;
+          b = color.z;
+        }
+        else{
+          r = r + color.x;
+          g = g + color.y;
+          b = b + color.z;
+        }
+      }
 
-
-      Vector3 target{
-        x/(float)w * 2 - 1, -(y/(float)h * 2 - 1), 0
-      };
-
-      Vector3 temp = (target - camera_origin);
-
-      Vector3 ray = temp.normalize();
-
-      Vector3 color = trace_ray(camera_origin, ray);
-
-      r = color.x;  
-      g = color.y;
-      b = color.z;
+      r = r/16;
+      g = g/16;
+      b = b/16;
       
       pixels[index] = r;
       pixels[index+1] = g;
