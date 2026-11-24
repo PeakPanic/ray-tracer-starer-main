@@ -285,8 +285,10 @@ void generate(bool animated, string name, int number){
       
       /// The value of the blue channel (0-255)
       b = background_color.z;
+
+      int samples = 16;
       
-      for (int i = 0; i < 16; i++){
+      for (int i = 0; i < samples; i++){
         
         
         //How do I ray trace?
@@ -315,9 +317,9 @@ void generate(bool animated, string name, int number){
         }
       }
 
-      r = r/16;
-      g = g/16;
-      b = b/16;
+      r = r/samples;
+      g = g/samples;
+      b = b/samples;
       
       pixels[index] = r;
       pixels[index+1] = g;
